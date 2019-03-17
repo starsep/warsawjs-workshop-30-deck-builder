@@ -18,8 +18,8 @@ import cards from '../cards.json';
 import TitleHeader from "./TitleHeader";
 
 function App() {
-  const [selectedHeroClass, setHeroClass] = useState('');
-  const [searchText, setSearchText] = useState('');
+  const [selectedHeroClass, setHeroClass] = useState('MAGE');
+  const [searchText, setSearchText] = useState('hodowca');
   const [highlightMechanic, setHighlightMechanic] = useState('');
   const [deck, setDeck] = useState({cards: [], quantity: {}});
   const [isManaVisible, setManaVisible] = useState(false);
