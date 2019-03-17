@@ -3,7 +3,7 @@ import 'semantic-ui-css/semantic.min.css';
 import filter from 'lodash/filter';
 import omit from 'lodash/omit';
 import Fuse from 'fuse.js';
-import {Grid, Container, Divider, Header} from 'semantic-ui-react';
+import { Grid, Container, Divider } from 'semantic-ui-react';
 
 import {CRAFTING_COST} from '../cards-rarity-config';
 import {UsedMechanics} from './UsedMechanics';
@@ -15,6 +15,7 @@ import {ManaCurve} from './ManaCurve';
 import {CardFilter} from './CardFilter';
 
 import cards from '../cards.json';
+import TitleHeader from "./TitleHeader";
 
 function App() {
   const [selectedHeroClass, setHeroClass] = useState('');
@@ -117,13 +118,9 @@ function App() {
         <HeroPicker setHeroClass={setHeroClass}/>
       ) : (
         <Grid>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Header dividing size="large">
-                Klasa: {selectedHeroClass}
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
+          <TitleHeader
+            selectedHeroClass={selectedHeroClass}
+          />
           <Grid.Row>
             <Grid.Column width={8}>
               <CardFilter
