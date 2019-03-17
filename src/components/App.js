@@ -1,6 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import _ from 'lodash';
+import filter from 'lodash/filter';
+import omit from 'lodash/omit';
 import Fuse from 'fuse.js';
 import {Grid, Container, Divider, Header} from 'semantic-ui-react';
 
@@ -26,7 +27,7 @@ function App() {
   const availableCards = useMemo(() => {
     console.log('availableCards');
     return selectedHeroClass
-      ? _.filter(
+      ? filter(
         cards,
         c => c.cardClass === selectedHeroClass || c.cardClass === 'NEUTRAL'
       )
@@ -36,7 +37,7 @@ function App() {
   const cardFilteredByType = useMemo(() => {
     console.log('cardFilteredByType');
     return cardsTypeFilter !== 'ALL'
-      ? _.filter(availableCards, c => c.type === cardsTypeFilter)
+      ? filter(availableCards, c => c.type === cardsTypeFilter)
       : availableCards;
   }, [cardsTypeFilter, availableCards]);
 
@@ -90,7 +91,7 @@ function App() {
       const quantity = deck.quantity[card.id]
         ? Object.assign(deck.quantity, {[card.id]: 2})
         : Object.assign(deck.quantity, {[card.id]: 1});
-      const cards = _.filter(availableCards, c => quantity[c.id]).sort(
+      const cards = filter(availableCards, c => quantity[c.id]).sort(
         (a, b) => a.cost - b.cost
       );
       setDeck({cards, quantity});
@@ -102,8 +103,8 @@ function App() {
     const quantity =
       deck.quantity[id] === 2
         ? Object.assign(deck.quantity, {[id]: 1})
-        : _.omit(deck.quantity, [id]);
-    const cards = _.filter(availableCards, c => quantity[c.id]).sort(
+        : omit(deck.quantity, [id]);
+    const cards = filter(availableCards, c => quantity[c.id]).sort(
       (a, b) => a.cost - b.cost
     );
     setDeck({cards, quantity});
