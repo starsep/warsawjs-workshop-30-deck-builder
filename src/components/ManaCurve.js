@@ -1,17 +1,19 @@
-import React from 'react';
-import { Checkbox } from 'semantic-ui-react';
-import { ManaCurveChart } from './ManaCurveChart';
+import React, {lazy, Suspense} from 'react';
+import {Checkbox} from 'semantic-ui-react';
+const ManaCurveChart = lazy(() => import('./ManaCurveChart'));
 
 export class ManaCurve extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { colorSafe: false };
+    this.state = {colorSafe: false};
   }
+
   handlColor = () => {
     this.setState(prevState => {
-      return { colorSafe: !prevState.colorSafe };
+      return {colorSafe: !prevState.colorSafe};
     });
   };
+
   render() {
     return (
       <React.Fragment>
@@ -22,14 +24,16 @@ export class ManaCurve extends React.Component {
           label="Krzywa many"
         />
         {this.props.isManaVisible && (
-          <React.Fragment>
-            <ManaCurveChart colorSafe={this.state.colorSafe} {...this.props} />
-            <Checkbox
-              checked={this.state.colorSafe}
-              onChange={() => this.handlColor()}
-              label="Bezpieczne kolory"
-            />
-          </React.Fragment>
+          <Suspense fallback={<div>Loading...</div>}>
+            <React.Fragment>
+              <ManaCurveChart colorSafe={this.state.colorSafe} {...this.props} />
+              <Checkbox
+                checked={this.state.colorSafe}
+                onChange={() => this.handlColor()}
+                label="Bezpieczne kolory"
+              />
+            </React.Fragment>
+          </Suspense>
         )}
       </React.Fragment>
     );
