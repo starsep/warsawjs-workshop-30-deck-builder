@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import _ from 'lodash';
 import Fuse from 'fuse.js';
-import { Grid, Container, Divider, Header } from 'semantic-ui-react';
+import {Grid, Container, Divider, Header} from 'semantic-ui-react';
 
-import { CRAFTING_COST } from '../cards-rarity-config';
-import { UsedMechanics } from './UsedMechanics';
-import { DeckStatistics } from './DeckStatistics';
-import { HeroPicker } from './HeroPicker';
-import { Deck } from './Deck';
-import { CardsFeed } from './CardsFeed';
-import { ManaCurve } from './ManaCurve';
-import { CardFilter } from './CardFilter';
+import {CRAFTING_COST} from '../cards-rarity-config';
+import {UsedMechanics} from './UsedMechanics';
+import {DeckStatistics} from './DeckStatistics';
+import {HeroPicker} from './HeroPicker';
+import {Deck} from './Deck';
+import {CardsFeed} from './CardsFeed';
+import {ManaCurve} from './ManaCurve';
+import {CardFilter} from './CardFilter';
 
 import cards from '../cards.json';
 
@@ -19,21 +19,26 @@ function App() {
   const [selectedHeroClass, setHeroClass] = useState('');
   const [searchText, setSearchText] = useState('');
   const [highlightMechanic, setHighlightMechanic] = useState('');
-  const [deck, setDeck] = useState({ cards: [], quantity: {} });
+  const [deck, setDeck] = useState({cards: [], quantity: {}});
   const [isManaVisible, setManaVisible] = useState(false);
   const [cardsTypeFilter, setCardsTypeFilter] = useState('ALL');
 
-  const availableCards = selectedHeroClass
-    ? _.filter(
+  const availableCards = useMemo(() => {
+    console.log('availableCards');
+    return selectedHeroClass
+      ? _.filter(
         cards,
         c => c.cardClass === selectedHeroClass || c.cardClass === 'NEUTRAL'
       )
-    : [];
+      : [];
+  }, [selectedHeroClass]);
 
-  const cardFilteredByType =
-    cardsTypeFilter !== 'ALL'
+  const cardFilteredByType = useMemo(() => {
+    console.log('cardFilteredByType');
+    return cardsTypeFilter !== 'ALL'
       ? _.filter(availableCards, c => c.type === cardsTypeFilter)
       : availableCards;
+  }, [cardsTypeFilter, availableCards]);
 
   const fuse = new Fuse(cardFilteredByType, {
     keys: [
@@ -48,8 +53,10 @@ function App() {
     ],
     threshold: 0.3,
   });
-  const cardsInFeed =
-    searchText.length > 0 ? fuse.search(searchText) : cardFilteredByType;
+  const cardsInFeed = useMemo(() => {
+    console.log('cardsInFeed');
+    return searchText.length > 0 ? fuse.search(searchText) : cardFilteredByType;
+  }, [searchText, cardsTypeFilter]);
 
   const totalPackCost = deck.cards.reduce(
     (a, v) => a + CRAFTING_COST[v.rarity] * deck.quantity[v.id],
@@ -61,7 +68,7 @@ function App() {
       []
     )
     .reduce((a, v) => (v.mechanics ? a.concat(v.mechanics) : a), [])
-    .reduce((a, v) => Object.assign(a, { [v]: (a[v] || 0) + 1 }), {});
+    .reduce((a, v) => Object.assign(a, {[v]: (a[v] || 0) + 1}), {});
 
   const cardCount = deck.cards.reduce((a, v) => a + 1 * deck.quantity[v.id], 0);
 
@@ -75,35 +82,38 @@ function App() {
     }
     return true;
   };
-  const addToDeck = card => {
-    if (!canAddCard(card)) {
-      return;
-    }
-    const quantity = deck.quantity[card.id]
-      ? Object.assign(deck.quantity, { [card.id]: 2 })
-      : Object.assign(deck.quantity, { [card.id]: 1 });
-    const cards = _.filter(availableCards, c => quantity[c.id]).sort(
-      (a, b) => a.cost - b.cost
-    );
-    setDeck({ cards, quantity });
-  };
+  const addToDeck = useCallback(
+    card => {
+      if (!canAddCard(card)) {
+        return;
+      }
+      const quantity = deck.quantity[card.id]
+        ? Object.assign(deck.quantity, {[card.id]: 2})
+        : Object.assign(deck.quantity, {[card.id]: 1});
+      const cards = _.filter(availableCards, c => quantity[c.id]).sort(
+        (a, b) => a.cost - b.cost
+      );
+      setDeck({cards, quantity});
+    },
+    [availableCards, deck.quantity]
+  );
 
   const removeFromDeck = id => {
     const quantity =
       deck.quantity[id] === 2
-        ? Object.assign(deck.quantity, { [id]: 1 })
+        ? Object.assign(deck.quantity, {[id]: 1})
         : _.omit(deck.quantity, [id]);
     const cards = _.filter(availableCards, c => quantity[c.id]).sort(
       (a, b) => a.cost - b.cost
     );
-    setDeck({ cards, quantity });
+    setDeck({cards, quantity});
   };
 
   return (
     <Container>
-      <Divider hidden />
+      <Divider hidden/>
       {!selectedHeroClass ? (
-        <HeroPicker setHeroClass={setHeroClass} />
+        <HeroPicker setHeroClass={setHeroClass}/>
       ) : (
         <Grid>
           <Grid.Row>
@@ -121,7 +131,7 @@ function App() {
                 cardsTypeFilter={cardsTypeFilter}
                 setCardsTypeFilter={setCardsTypeFilter}
               />
-              <Divider hidden />
+              <Divider hidden/>
               <CardsFeed
                 deck={deck}
                 cardsInFeed={cardsInFeed}
