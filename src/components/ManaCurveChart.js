@@ -11,10 +11,6 @@ const calc = (deck) => {
           : a.concat([v.cost]),
       []
     )
-    .map(i => {
-      console.log(i);
-      return i;
-    })
     .reduce((a, v) => {
       let count = {};
       if (v >= 7) {
