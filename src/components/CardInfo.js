@@ -1,6 +1,6 @@
 import {Card, Icon, Label} from 'semantic-ui-react';
 import {COLOR, LIMIT_IN_DECK} from "../cards-rarity-config";
-import React, {Component, memo, PureComponent} from "react";
+import React, {memo} from "react";
 
 const CardInfo = memo(({card, quantity, addToDeck}) => {
   return (

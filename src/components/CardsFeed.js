@@ -2,7 +2,7 @@ import React from 'react';
 import {Card} from 'semantic-ui-react';
 import CardInfo from "./CardInfo";
 
-export class CardsFeed extends React.Component {
+export class CardsFeed extends React.PureComponent {
   render() {
     return (
       <Card.Group>
