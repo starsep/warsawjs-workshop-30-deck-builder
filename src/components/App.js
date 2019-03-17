@@ -1,9 +1,10 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import filter from 'lodash/filter';
 import omit from 'lodash/omit';
 import Fuse from 'fuse.js';
 import { Grid, Container, Divider } from 'semantic-ui-react';
+import axios from 'axios';
 
 import {CRAFTING_COST} from '../cards-rarity-config';
 import {UsedMechanics} from './UsedMechanics';
@@ -13,8 +14,6 @@ import {Deck} from './Deck';
 import {CardsFeed} from './CardsFeed';
 import {ManaCurve} from './ManaCurve';
 import {CardFilter} from './CardFilter';
-
-import cards from '../cards.json';
 import TitleHeader from "./TitleHeader";
 
 function App() {
@@ -24,10 +23,21 @@ function App() {
   const [deck, setDeck] = useState({cards: [], quantity: {}});
   const [isManaVisible, setManaVisible] = useState(false);
   const [cardsTypeFilter, setCardsTypeFilter] = useState('ALL');
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(process.env.PUBLIC_URL + '/cards.json');
+
+      setCards(result.data);
+    };
+
+    fetchData();
+  }, []);
 
   const availableCards = useMemo(() => {
     console.log('availableCards');
-    return selectedHeroClass
+    return selectedHeroClass && cards.length > 0
       ? filter(
         cards,
         c => c.cardClass === selectedHeroClass || c.cardClass === 'NEUTRAL'
