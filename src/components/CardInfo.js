@@ -2,13 +2,14 @@ import {Card, Icon, Label} from 'semantic-ui-react';
 import {COLOR, LIMIT_IN_DECK} from "../cards-rarity-config";
 import React, {memo} from "react";
 
-const CardInfo = memo(({card, quantity, addToDeck}) => {
+const CardInfo = memo(({card, quantity, addToDeck, height}) => {
   return (
     <Card
       color={COLOR[card.rarity]}
       fluid
       onClick={() => addToDeck(card)}
       key={card.id}
+      style={{height}}
     >
       <Card.Content>
         <Card.Header>
